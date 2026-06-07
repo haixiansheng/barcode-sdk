@@ -1,0 +1,7 @@
+; Barcode Detection SDK — 模块定义文件
+EXPORTS
+    InitializeDetector
+    DetectBarcodes
+    FreeDetectionResult
+    ReleaseDetector
+    GetVersion

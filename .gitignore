@@ -1,0 +1,46 @@
+# Barcode-SDK .gitignore
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+dist/
+build/
+*.egg
+
+# C++ Build
+build/
+*.obj
+*.exp
+*.lib
+*.dll
+*.pdb
+*.ilk
+.vs/
+*.user
+*.suo
+
+# Data
+dataset/
+*.pt
+*.onnx
+*.bin
+*.xml
+*.weights
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Output
+runs/
+output/
+results/
+*.log

@@ -1,0 +1,71 @@
+name: Barcode-SDK CI
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  test-python:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.9", "3.10", "3.11"]
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+
+    - name: Check model export scripts
+      run: |
+        python -c "from ultralytics import YOLO; print('Ultralytics OK')"
+
+    - name: Test Python inference module
+      run: |
+        python -c "
+import sys
+sys.path.insert(0, '05_deployment/python')
+from barcode_detector import BarcodeDetector
+print('BarcodeDetector module loaded successfully')
+"
+
+  test-cpp-build:
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install OpenCV
+      run: |
+        choco install opencv -y
+
+    - name: Configure CMake
+      run: |
+        cd 05_deployment/cpp
+        mkdir build
+        cd build
+        cmake .. -DCMAKE_BUILD_TYPE=Release
+
+    - name: Build DLL
+      run: |
+        cd 05_deployment/cpp/build
+        cmake --build . --config Release
+
+    - name: Verify DLL output
+      run: |
+        if (Test-Path "05_deployment/cpp/build/bin/Release/BarcodeDetector.dll") {
+            Write-Output "DLL build successful"
+        } else {
+            Write-Error "DLL not found"
+            exit 1
+        }
